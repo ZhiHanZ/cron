@@ -89,10 +89,7 @@ func TestSnapshotEntries(t *testing.T) {
 	defer cron.Stop()
 
 	// Cron should fire in 2 seconds. After 1 second, call Entries.
-	select {
-	case <-time.After(ONE_SECOND):
-		cron.Entries()
-	}
+	time.Sleep(ONE_SECOND)
 
 	// Even though Entries was called, the cron should fire at the 2 second mark.
 	select {
@@ -187,7 +184,7 @@ func TestRunEverMsWithOneMs(t *testing.T) {
 			occupied.Store(false)
 		}()
 		time.Sleep(100 * time.Millisecond)
-		t.Logf("exec %v", time.Now().Sub(start))
+		t.Logf("exec %v", time.Since(start))
 		wg.Done()
 	}), "test20")
 	cron.Start()
@@ -197,9 +194,9 @@ func TestRunEverMsWithOneMs(t *testing.T) {
 	case <-time.After(2 * ONE_SECOND):
 		t.FailNow()
 	case <-wait(wg):
-		t.Log(time.Now().Sub(s))
-		if time.Now().Sub(s) < 1500*time.Millisecond {
-			t.Errorf("time %v", time.Now().Sub(s))
+		t.Log(time.Since(s))
+		if time.Since(s) < 1500*time.Millisecond {
+			t.Errorf("time %v", time.Since(s))
 		}
 	}
 }
@@ -229,7 +226,7 @@ func TestRunEveryMs(t *testing.T) {
 			occupied.Store(false)
 		}()
 		time.Sleep(600 * time.Millisecond)
-		t.Logf("exec %v", time.Now().Sub(start))
+		t.Logf("exec %v", time.Since(start))
 		wg.Done()
 	}), "test19")
 	cron.Start()
@@ -239,9 +236,9 @@ func TestRunEveryMs(t *testing.T) {
 	case <-time.After(3 * ONE_SECOND):
 		t.FailNow()
 	case <-wait(wg):
-		t.Log(time.Now().Sub(s))
-		if time.Now().Sub(s) < 1800*time.Millisecond {
-			t.Errorf("time %v", time.Now().Sub(s))
+		t.Log(time.Since(s))
+		if time.Since(s) < 1800*time.Millisecond {
+			t.Errorf("time %v", time.Since(s))
 		}
 	}
 }
@@ -273,7 +270,7 @@ func TestRunTight(t *testing.T) {
 			occupied.Store(false)
 		}()
 		time.Sleep(1100 * time.Millisecond)
-		t.Logf("exec %v", time.Now().Sub(start))
+		t.Logf("exec %v", time.Since(start))
 		wg.Done()
 	}), "test18")
 	cron.Start()
@@ -282,9 +279,9 @@ func TestRunTight(t *testing.T) {
 	case <-time.After(6 * ONE_SECOND):
 		t.FailNow()
 	case <-wait(wg):
-		t.Log(time.Now().Sub(s))
-		if time.Now().Sub(s) < 4400*time.Millisecond {
-			t.Errorf("time %v", time.Now().Sub(s))
+		t.Log(time.Since(s))
+		if time.Since(s) < 4400*time.Millisecond {
+			t.Errorf("time %v", time.Since(s))
 		}
 	}
 }
@@ -318,7 +315,7 @@ func TestRunNoTight(t *testing.T) {
 			occupied.Store(false)
 		}()
 		time.Sleep(1100 * time.Millisecond)
-		t.Logf("exec %v", time.Now().Sub(start))
+		t.Logf("exec %v", time.Since(start))
 		wg.Done()
 	}), "test18")
 	cron.Start()
@@ -327,8 +324,8 @@ func TestRunNoTight(t *testing.T) {
 	case <-time.After(9 * ONE_SECOND):
 		t.FailNow()
 	case <-wait(wg):
-		if time.Now().Sub(s) < 7*time.Second {
-			t.Errorf("time %v", time.Now().Sub(s))
+		if time.Since(s) < 7*time.Second {
+			t.Errorf("time %v", time.Since(s))
 		}
 		if skipTimes != 4 {
 			t.Errorf("skipTimes %v", skipTimes)

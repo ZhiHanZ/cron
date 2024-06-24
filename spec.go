@@ -65,7 +65,7 @@ func (s *SpecSchedule) Next(t time.Time) time.Time {
 	// values)
 
 	// Start at the earliest possible time (the upcoming second).
-	var localTz *time.Location = t.Location()
+	var localTz = t.Location()
 	// use the schedule's timezone if it's set
 	// return to the local timezone when done
 	if s.TimeZone != nil {

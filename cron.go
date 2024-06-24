@@ -3,7 +3,6 @@
 package cron
 
 import (
-	"github.com/sirupsen/logrus"
 	"sort"
 	"time"
 )
@@ -110,7 +109,7 @@ func (c *Cron) IsTight() bool {
 	return c.tight
 }
 
-// A wrapper that turns a func() into a cron.Job
+// FuncJob A wrapper that turns a func() into a cron.Job
 type FuncJob func()
 
 func (f FuncJob) Run() { f() }
@@ -232,10 +231,7 @@ func (c *Cron) run() {
 				e := runEarlyEntry.CurrentEntry
 				e.Prev = runEarlyEntry.EndTime
 				e.Next = e.Schedule.Next(runEarlyEntry.EndTime)
-				logrus.WithField("name", runEarlyEntry.CurrentEntry.Name).WithField("prev", runEarlyEntry.CurrentEntry.Prev).WithField("next", runEarlyEntry.CurrentEntry.Next).Infof("Start Run early entry")
 				go c.execute(e)
-				logrus.WithField("name", runEarlyEntry.CurrentEntry.Name).WithField("prev", runEarlyEntry.CurrentEntry.Prev).WithField("next", runEarlyEntry.CurrentEntry.Next).Infof("End Run early entry")
-
 			}
 			continue
 		case now = <-time.After(effective.Sub(now)):
@@ -246,9 +242,7 @@ func (c *Cron) run() {
 				}
 				e.Prev = e.Next
 				e.Next = e.Schedule.Next(effective)
-				logrus.WithField("name", e.Name).WithField("prev", e.Prev).WithField("next", e.Next).Infof("Start Run entry")
 				go c.execute(e)
-				logrus.WithField("name", e.Name).WithField("prev", e.Prev).WithField("next", e.Next).Infof("End Run entry")
 			}
 			continue
 
@@ -275,7 +269,7 @@ func (c *Cron) run() {
 		case <-c.stop:
 			return
 		default:
-			// avoid bloc
+			// avoid block
 		}
 
 		// 'now' should be updated after newEntry and snapshot cases.
